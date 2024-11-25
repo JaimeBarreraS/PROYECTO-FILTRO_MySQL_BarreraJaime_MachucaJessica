@@ -19,7 +19,8 @@ CREATE TABLE Empleado (
     ciudad VARCHAR(50),
     rol VARCHAR(50),
     salario DECIMAL(10, 2),
-    fecha_contratacion DATE
+    fecha_contratacion DATE,
+    estado VARCHAR(50)
 );
 
 CREATE TABLE Maquinaria (
@@ -66,9 +67,10 @@ CREATE TABLE Venta (
     fecha_venta DATE,
     id_cliente INT,
     total DECIMAL(10, 2),
-    producto_vendido VARCHAR(50),
+    id_producto INT,
     metodo_pago VARCHAR(50),
-    FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente)
+    FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente),
+    FOREIGN KEY (id_producto) REFERENCES Inventario(id_producto)
 );
 
 CREATE TABLE Detalle_Venta (
@@ -94,13 +96,15 @@ CREATE TABLE Asignacion_Empleado (
 );
 
 CREATE TABLE Inventario (
-    id_inventario INT PRIMARY KEY AUTO_INCREMENT,
-    id_producto INT,
+    id_producto INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100),
     descripcion VARCHAR(100),
     cantidad_disponible DECIMAL(10, 2),
-    unidad VARCHAR(20),
+    unidad_medida VARCHAR(20),
     fecha_actualizacion DATE,
-    tipo VARCHAR(20)
+    tipo VARCHAR(20),
+    id_proveedor INT,
+    FOREIGN KEY (id_proveedor) REFERENCES Proveedor(id_proveedor)
 );
 
 CREATE TABLE Mantenimiento (
