@@ -47,7 +47,7 @@ CREATE TABLE Produccion (
     id_cultivo INT,
     fecha_cosecha DATE,
     toneladas_RFF DECIMAL(10, 2),
-    destino VARCHAR(20),
+    destino VARCHAR(100),
     estado_destino VARCHAR(20),
     FOREIGN KEY (id_cultivo) REFERENCES Cultivo(id_cultivo)
 );
