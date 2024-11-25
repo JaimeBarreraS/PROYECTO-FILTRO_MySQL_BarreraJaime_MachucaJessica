@@ -3,34 +3,39 @@ USE Palmaris_Tech;
 
 CREATE TABLE Cultivo (
     id_cultivo INT PRIMARY KEY AUTO_INCREMENT,
+    id_estado INT,
     variedad VARCHAR(50),
     fecha_siembra DATE,
     hectareas DECIMAL(10, 2),
     estado VARCHAR(20),
     rendimiento_estimado DECIMAL(10, 2),
-    id_lote INT
+    id_lote INT,
+    FOREIGN KEY (id_estado) REFERENCES Estado(id_estado)
 );
 
 CREATE TABLE Empleado (
     id_empleado INT PRIMARY KEY AUTO_INCREMENT,
+    id_estado INT,
     nombre VARCHAR(50),
     apellidos VARCHAR(50),
     direccion VARCHAR(100),
     ciudad VARCHAR(50),
     rol VARCHAR(50),
-    salario DECIMAL(10, 2),
     fecha_contratacion DATE,
-    estado VARCHAR(50)
+    estado VARCHAR(50),
+    FOREIGN KEY (id_estado) REFERENCES Estado(id_estado)
 );
 
 CREATE TABLE Maquinaria (
     id_maquinaria INT PRIMARY KEY AUTO_INCREMENT,
+    id_estado INT,
     nombre VARCHAR(50),
     estado VARCHAR(50),
     fecha_compra DATE,
     costo_adquisicion VARCHAR(20),
     ultimo_mantenimiento DATE,
-    horas_operativas DECIMAL(10, 2)
+    horas_operativas DECIMAL(10, 2),
+    FOREIGN KEY (id_estado) REFERENCES Estado(id_estado)
 );
 
 CREATE TABLE Proveedor (
@@ -64,13 +69,15 @@ CREATE TABLE Cliente (
 
 CREATE TABLE Venta (
     id_venta INT PRIMARY KEY AUTO_INCREMENT,
+    id_estado INT,
     fecha_venta DATE,
     id_cliente INT,
     total DECIMAL(10, 2),
     id_producto INT,
     metodo_pago VARCHAR(50),
     FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente),
-    FOREIGN KEY (id_producto) REFERENCES Inventario(id_producto)
+    FOREIGN KEY (id_producto) REFERENCES Inventario(id_producto),
+    FOREIGN KEY (id_estado) REFERENCES Estado(id_estado)
 );
 
 CREATE TABLE Detalle_Venta (
@@ -113,7 +120,6 @@ CREATE TABLE Mantenimiento (
     id_empleado INT,
     fecha_mantenimiento DATE,
     tipo_mantenimiento VARCHAR(50),
-    costo DECIMAL(10, 2),
     descripcion TEXT,
     FOREIGN KEY (id_maquinaria) REFERENCES Maquinaria(id_maquinaria),
     FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado)
@@ -129,5 +135,57 @@ CREATE TABLE Fertilizacion (
     FOREIGN KEY (id_cultivo) REFERENCES Cultivo(id_cultivo)
 );
 
+CREATE TABLE Gastos (
+id_gastos INT PRIMARY KEY AUTO_INCREMENT,
+id_empleado INT,
+id_cultivo INT,
+id_proveedor INT,
+id_maquinaria INT,
+fecha_pago DATE,
+pago VARCHAR(100),
+tipo_gasto VARCHAR(80),
+FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado),
+FOREIGN KEY (id_cultivo) REFERENCES Cultivo(id_cultivo),
+FOREIGN KEY (id_proveedor) REFERENCES Proveedor(id_proveedor),
+FOREIGN KEY (id_maquinaria) REFERENCES Maquinaria(id_maquinaria)
+);
+
+CREATE TABLE Estado (
+id_estado INT PRIMARY KEY AUTO_INCREMENT,
+descripcion_estado VARCHAR(100),
+estado_activo boolean,
+orden INT
+);
+
+CREATE TABLE Perdidas (
+id_perdida INT PRIMARY KEY AUTO_INCREMENT,
+id_empleado INT,
+id_cultivo INT,
+id_proveedor INT,
+id_maquinaria INT,
+fecha_perdida DATE,
+monto_perdida INT,
+categoria VARCHAR(80),
+fecha_recuperacion date,
+FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado),
+FOREIGN KEY (id_cultivo) REFERENCES Cultivo(id_cultivo),
+FOREIGN KEY (id_proveedor) REFERENCES Proveedor(id_proveedor),
+FOREIGN KEY (id_maquinaria) REFERENCES Maquinaria(id_maquinaria)
+);
+
+CREATE TABLE Salario (
+id_salario INT PRIMARY KEY AUTO_INCREMENT,
+id_empleado INT,
+id_cultivo INT,
+id_maquinaria INT,
+fecha_inicio DATE,
+fecha_fin DATE,
+salario_base INT,
+dias_faltas INT,
+costo_dia_falta INT,
+FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado),
+FOREIGN KEY (id_cultivo) REFERENCES Cultivo(id_cultivo),
+FOREIGN KEY (id_maquinaria) REFERENCES Maquinaria(id_maquinaria)
+);
 SHOW TABLES;
 
