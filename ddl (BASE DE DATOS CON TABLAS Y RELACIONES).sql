@@ -21,6 +21,7 @@ CREATE TABLE Empleado (
     direccion VARCHAR(100),
     ciudad VARCHAR(50),
     rol VARCHAR(50),
+    salario INT,
     fecha_contratacion DATE,
     estado VARCHAR(50),
     FOREIGN KEY (id_estado) REFERENCES Estado(id_estado)
@@ -120,6 +121,7 @@ CREATE TABLE Mantenimiento (
     id_empleado INT,
     fecha_mantenimiento DATE,
     tipo_mantenimiento VARCHAR(50),
+    costo INT,
     descripcion TEXT,
     FOREIGN KEY (id_maquinaria) REFERENCES Maquinaria(id_maquinaria),
     FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado)
