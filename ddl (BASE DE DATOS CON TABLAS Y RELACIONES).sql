@@ -1,6 +1,6 @@
-CREATE DATABASE Palmaris_Tech_t3;
+CREATE DATABASE Palmaris_Tech;
 
-USE Palmaris_Tech_t3;
+USE Palmaris_Tech;
 
 CREATE TABLE Cultivo (
     id_cultivo INT PRIMARY KEY AUTO_INCREMENT,

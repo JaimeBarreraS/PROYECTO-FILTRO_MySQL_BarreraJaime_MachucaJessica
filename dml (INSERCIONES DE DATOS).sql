@@ -1,4 +1,4 @@
-USE Palmaris_Tech_t3;
+USE Palmaris_Tech;
 
 -- Insert de la tabla Cultivo.
 INSERT INTO Cultivo (variedad, fecha_siembra, hectareas, id_estado, rendimiento_estimado, id_lote)
