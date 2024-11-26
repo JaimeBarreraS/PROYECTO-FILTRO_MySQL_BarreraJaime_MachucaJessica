@@ -328,55 +328,55 @@ FROM Detalle_Venta
 WHERE id_venta = 1;
 
 -- inner join.
--- 1.
+-- 1. Inner join entre la tabla cliente y venta.
 select cliente.id_cliente, cliente.nombre, venta.id_venta, venta.fecha_venta from cliente 
 inner join venta on cliente.id_cliente = venta.id_cliente;
 
--- 2. 
+-- 2. Inner join de las tablas mantenimiento y empleado con los atributos ascendentes.
 select distinct mantenimiento.id_mantenimiento, empleado.id_empleado, empleado.nombre, empleado.apellidos from mantenimiento 
 inner join empleado on mantenimiento.id_empleado = empleado.id_empleado
 order by empleado.id_empleado asc, empleado.nombre asc, empleado.apellidos asc, mantenimiento.id_mantenimiento asc;
 
--- 3. 
+-- 3. Inner join de las tablas venta e inventario con el atributo id_venta ascendente.
 select venta.id_venta, venta.fecha_venta, venta.total, venta.metodo_pago, Inventario.nombre, Inventario.descripcion 
 as descripcion, Inventario.cantidad_disponible from venta inner join Inventario 
 on venta.id_producto = Inventario.id_producto order by venta.id_venta asc;
 
--- 4. 
+-- 4. Inner join de las tablas inventario y proveedor donde el id_inventario debe ser igual al id_proveedor.
 select * from proveedor; 
 select Inventario.nombre, Inventario.descripcion as descripcion, Inventario.cantidad_disponible, proveedor.id_proveedor,
 proveedor.nombre, proveedor.telefono, proveedor.correo_electronico from inventario inner join proveedor
 on inventario.id_proveedor = proveedor.id_proveedor;
 
--- 5. 
+-- 5. Inner join de la tabla cultivo y estado donde ordena por el id_cultivo.
 select cultivo.id_cultivo, cultivo.variedad, cultivo.fecha_siembra, estado.descripcion_estado from cultivo inner join estado
 on cultivo.id_estado = estado.id_estado order by cultivo.id_cultivo desc;
 
--- 6. 
+-- 6. Inner join de la tabla produccion y cultivo donde produccion_destino debe ser igual Mercado Local.
 select * from produccion;
 select produccion.id_produccion, produccion.fecha_cosecha, produccion.destino, cultivo.id_cultivo, cultivo.hectareas, cultivo.rendimiento_estimado
 from produccion inner join cultivo on produccion.id_cultivo = cultivo.id_cultivo where produccion.destino = 'Mercado Local';
 
--- 7. 
+-- 7. Inner join de las tablas inventario y cliente y ordena por fecha_venta.
 select * from inventario;
 select * from estado;
 select venta.id_venta, venta.fecha_venta, cliente.nombre, cliente.apellidos, inventario.id_producto, inventario.cantidad_disponible, 
 estado.descripcion_estado from venta inner join cliente on venta.id_cliente = cliente.id_cliente inner join inventario
 on venta.id_producto = inventario.id_producto inner join estado on venta.id_estado = estado.id_estado order by venta.fecha_venta desc;
 
--- 8. 
+-- 8. Inner join fertilizacion y cultivo donde el insumo debe de ser Urea.
 select * from fertilizacion;
 select fertilizacion.id_fertilizacion, fertilizacion.fecha_aplicacion, fertilizacion.insumo_utilizado, cultivo.id_cultivo, cultivo.variedad, cultivo.fecha_siembra
 from fertilizacion inner join cultivo on fertilizacion.id_cultivo = cultivo.id_cultivo where fertilizacion.insumo_utilizado = 'Urea';
 
--- 9. 
+-- 9.  Inner join de las tablas mantenimiento y maquinaria donde el costo debe ser 200.
 select * from maquinaria;
 select * from mantenimiento;
 select mantenimiento.id_mantenimiento, mantenimiento.fecha_mantenimiento, mantenimiento.costo, maquinaria.id_maquinaria, 
 maquinaria.estado, maquinaria.fecha_compra, maquinaria.horas_operativas from mantenimiento inner join maquinaria
 on mantenimiento.id_maquinaria = maquinaria.id_maquinaria where mantenimiento.costo = '200';
 
--- 10. 
+-- 10. Inner join de las tablas salario, empleadoy maquinaria con fecha de inicio mayor a fecha_fin.
 select * from salario;
 select salario.id_salario, salario.salario_base, salario.fecha_inicio, salario.fecha_fin, empleado.nombre, empleado.apellidos,
 cultivo.variedad, maquinaria.nombre from salario inner join empleado on salario.id_empleado = empleado.id_empleado inner join cultivo
@@ -384,149 +384,149 @@ on salario.id_cultivo = cultivo.id_cultivo inner join maquinaria on salario.id_m
 where salario.fecha_inicio >= '2024-01-01' and salario.fecha_fin <= '2024-12-31';
 
 -- Consultas
--- 11. 
+-- 11. Los atributos deben aparecer en minusculas.
 select lower(concat(nombre, ' ', apellidos, '   ', coalesce(`direccion`, ' '))) as nombre_direccion from empleado;
 
--- 12. 
+-- 12.  En la tabla empleado la fecha _fin debe ser mayor a fecha_inicio.
 select fecha_inicio, fecha_fin from Salario where fecha_fin > fecha_inicio;
 
--- 13. 
+-- 13. Conteo de los empleados con nombre José.
 select count(*) as total_empleados from empleado where nombre = 'José';
 
--- 14. 
+-- 14. Todos los atributos de la tabla cliente con limite 5. 
 select * from cliente limit 5 offset 2;
 
--- 15. 
+-- 15. Conteo del monto_perdida debe de ser 1200.
 select count(*) as monto_perdida from perdidas where monto_perdida = '1200';
 
--- 16. 
+-- 16. Ordenar descendentemente los atributos de las tablas cultivo y estado.
 select cultivo.id_cultivo, cultivo.fecha_siembra, estado.id_estado, estado.descripcion_estado from cultivo right join estado
 on cultivo.id_estado = estado.id_estado order by cultivo.id_cultivo desc, cultivo.fecha_siembra desc, 
 estado.id_estado desc, estado.descripcion_estado desc;
 
--- 17. 
+-- 17. Muestra las columnas de la izquierda de la tabla inventario.
 select * from Inventario;
 select * from venta left join inventario on venta.id_venta = inventario.id_producto; 
 
--- 18. 
+-- 18. En la tabla salario los dias de faltas deben ser mayor o igual a 3.
 select * from salario;
 select salario_base, fecha_inicio, costo_dia_falta, dias_faltas from salario where dias_faltas >= 3;
 
--- 19.
+-- 19. Ordena de forma descendente desde el atributo fecha_fin.
 select fecha_inicio, fecha_fin from salario order by fecha_fin desc;
 
--- 20. 
+-- 20. Ordena de forma ascendentemente el nombre de los clientes.
 select distinct nombre from cliente order by 1 asc; 
 
--- 21. 
+-- 21. Muestra los datos iguales en la tabla gastos y empleados.
 select * from gastos left join empleado on gastos.id_gastos = empleado.id_empleado;
 
--- 22. 
+-- 22. Muestra en la tabla empleado los salarios que son nulos. 
 select * from empleado;
 select salario, ciudad, nombre, estado from empleado where salario is null;
 
--- 23. 
+-- 23. Lista las columnas de la derecha que estan en produccion y cultivo.
 select * from produccion;
 select id_produccion, fecha_cosecha, destino from produccion right join cultivo on produccion.id_produccion = cultivo.id_cultivo;
 
--- 24. 
+-- 24. Lista los clientes con apellido Pérez. 
 select * from cliente where apellidos = 'Pérez';
 
--- 25. 
+-- 25. Suma el costo de la tabla mantenimiento. 
 select sum(costo) as costo from mantenimiento;
 
--- 26. 
+-- 26.  Saca un promedio de la cantidad de aplicacion en el cultivo de los fertilizantes.
 select avg(cantidad_aplicada) as cantidad_aplicada from fertilizacion;
 
--- 27.
+-- 27. Hace un subconsulta donde nos arroja el minimo del monto de perdida de la tabla perdidas.
 select categoria, monto_perdida from perdidas where monto_perdida = (select min(monto_perdida) from perdidas);
 
--- 28. 
-select count(*) as total_empleados from empleado where nombre = 'José';
+-- 28. Nos hace un conteo de los clientes con nombre de Andres.
+select count(*) as total_cliente from cliente where nombre = 'Andres';
 
--- 29. 
+-- 29. Listar los atributos en mayusculas.
 select upper(concat(nombre,' ', apellidos, ' ', coalesce(`apellidos`, ''))) as Nombre_apellidos from cliente;
 
--- 30. 
+-- 30. Lista los salarios mayor a 2100 y menor a 2500.
 select * from salario;
 select fecha_inicio, salario_base from salario where salario_base >= 2100 and salario_base <= 2500;
 
--- 31. 
+-- 31. Lista los empleados que vivan en la ciudad A.
 select * from empleado;
 select distinct ciudad, nombre, apellidos from empleado where ciudad = 'Ciudad A';
 
--- 32. 
+-- 32.Lista el rendimiento estimado del cultivo que sea igual a 2000.00. 
 select * from cultivo;
 select variedad, hectareas, id_lote, rendimiento_estimado from cultivo where rendimiento_estimado = '2000.00';
 
--- 33. 
+-- 33. Lista el total maximo de la tabla venta.
 select * from venta;
 select fecha_venta, metodo_pago, total from venta where total = (select max(total) from venta);
 
--- 34. 
+-- 34. Lista los atributos iguales en las entidades mantenimiento y empleado.
 select * from mantenimiento;
 select  id_mantenimiento, fecha_mantenimiento, costo from mantenimiento left join empleado on mantenimiento.id_mantenimiento = empleado.id_empleado;
 
--- 35. 
+-- 35. Lista la cantidad disponible del inventario 200.00 y 800.00.
 select * from inventario;
 select nombre, cantidad_disponible from inventario where cantidad_disponible not between 200.00 and 800.00;
 
--- 36. 
+-- 36. Lista los proveedores los cuales el nombre sea ProAgro S.A.
 select * from proveedor;
 select nombre, direccion, telefono from proveedor where nombre = 'ProAgro S.A.';
 
--- 37. 
+-- 37. Lista y hace un conteo del estado y el id del empeado y los agrupa.
 select empleado.id_empleado, count(estado.id_estado) as estado from empleado left join estado
 on empleado.id_empleado = estado.id_estado group by empleado.id_empleado;
 
--- 38. 
+-- 38. Lista los atributos en mayusculasa.
 select upper(concat(nombre, ' ', apellidos, ' ', coalesce(`apellidos`, ' '))) as nombre_apellido from cliente;
 
--- 39. 
+-- 39. Lista el promedio del subtotal de detalles venta.
 select * from detalle_venta;
 select avg(subtotal) as subtotal from detalle_venta;
 
--- 40.
+-- 40. Lista la duracion mayor o igual a 6.50.
 select * from asignacion_empleado;
 select actividad, duracion from asignacion_empleado where duracion >= '6.50';
 
--- 41. 
+-- 41. Lista la fecha, efectividad y cantidada de fertilizacion de forma descendente con limite 1.
 select * from fertilizacion;
 select  fecha_aplicacion, efectividad_estimada, cantidad_aplicada from fertilizacion order by efectividad_estimada desc limit 2;
 
--- 42. 
+-- 42. Lista la fecha de pago que sea menor a 2024-01-01.
 select * from gastos;
 select fecha_pago, pago, tipo_gasto from gastos where fecha_pago <= '2024-01-01';
 
--- 43. 
+-- 43. Lista la categoria que sea igual a Robo.
 select * from perdidas;
 select monto_perdida, categoria, fecha_recuperacion from perdidas where categoria = 'Robo';
 
--- 44. 
+-- 44. Lista los costos por dias que sean igual a 50.
 select * from salario;
 select dias_faltas, costo_dia_falta from salario where costo_dia_falta = 50;
 
--- 45. 
+-- 45. Lista las columnas de la derecha de las tablas inventario y proveedor.
 select * from inventario;
 select id_producto, inventario.nombre, inventario.cantidad_disponible from inventario right join proveedor on inventario.id_producto = proveedor.id_proveedor;
 
--- 46. 
+-- 46. Lista el lote que sea 3 y 8.
 select * from cultivo;
 select hectareas, variedad, id_lote from cultivo where id_lote between 3 and 8;
 
--- 47. 
+-- 47. Lista el nombre los cliented que sea igual a Carlos y el apellido igual a Gomez
 select * from cliente;
 select * from cliente where nombre = 'Carlos' and apellidos = 'Gomez';
 
--- 48. 
+-- 48. Lista las columnas de la izquierda de la tabla venta y estado.
 select * from venta;
 select id_venta, venta.fecha_venta, venta.total from venta left join estado on venta.id_venta = estado.id_estado;
 
--- 49. 
+-- 49. Lista el precio unitario 60.00 y 89.00.
 select * from detalle_venta;
 select  cantidad_vendida precio_unitario from detalle_venta where precio_unitario not between 60.00 and 89.00;
 
--- 50. 
+-- 50. Lista la actividada que sea igual a Cosecha de palma.
 select * from asignacion_empleado;
 select actividad, duracion from asignacion_empleado where actividad = 'Cosecha de palma';
 
