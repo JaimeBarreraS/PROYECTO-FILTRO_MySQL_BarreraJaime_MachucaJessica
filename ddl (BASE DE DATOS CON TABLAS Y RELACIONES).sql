@@ -1,5 +1,6 @@
-CREATE DATABASE Palmaris_Tech;
-USE Palmaris_Tech;
+CREATE DATABASE Palmaris_Tech_t1;
+
+USE Palmaris_Tech_t1;
 
 CREATE TABLE Cultivo (
     id_cultivo INT PRIMARY KEY AUTO_INCREMENT,
@@ -28,7 +29,6 @@ CREATE TABLE Maquinaria (
     id_maquinaria INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(50),
     estado_maquinaria VARCHAR(50),
-    estado VARCHAR(50),
     fecha_compra DATE,
     costo_adquisicion VARCHAR(20),
     ultimo_mantenimiento DATE,
