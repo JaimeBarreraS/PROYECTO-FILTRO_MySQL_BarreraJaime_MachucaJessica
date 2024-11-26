@@ -28,7 +28,6 @@ CREATE TABLE Maquinaria (
     id_maquinaria INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(50),
     estado_maquinaria VARCHAR(50),
-    estado VARCHAR(50),
     fecha_compra DATE,
     costo_adquisicion VARCHAR(20),
     ultimo_mantenimiento DATE,
