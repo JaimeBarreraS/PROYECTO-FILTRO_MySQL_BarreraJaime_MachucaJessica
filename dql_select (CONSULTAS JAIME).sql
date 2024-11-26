@@ -36,13 +36,15 @@ FROM Empleado E
 JOIN Salario S ON E.id_empleado = S.id_empleado
 WHERE S.salario_base > 2000;
 
--- 6. Ventas por cada proveedor de productos
+-- 6. detalles de la maquinaria asignada a esos cultivos
 
-SELECT P.nombre AS proveedor, SUM(D.cantidad_vendida * D.precio_unitario) AS total_ventas
-FROM Proveedor P
-JOIN Inventario I ON P.id_proveedor = I.id_proveedor
-JOIN Detalle_Venta D ON I.id_producto = D.id_producto
-GROUP BY P.nombre;
+SELECT E.nombre AS empleado,C.variedad AS cultivo,
+M.nombre AS maquinaria,A.actividad,A.fecha_asignacion
+FROM Asignacion_Empleado A
+JOIN Empleado E ON A.id_empleado = E.id_empleado
+JOIN Cultivo C ON A.id_cultivo = C.id_cultivo
+JOIN Maquinaria M ON C.id_lote = M.id_maquinaria
+ORDER BY E.nombre, C.variedad;
 
 -- 7. Gastos por fertilización y tipo de insumo utilizado
 
@@ -89,7 +91,6 @@ JOIN Produccion P ON C.id_cultivo = P.id_cultivo
 GROUP BY C.variedad
 ORDER BY rentabilidad DESC;
 
-
 -- ####### CONSULTAS ###########
 
 -- 13. Ventas por cliente
@@ -99,20 +100,19 @@ FROM Cliente C, Venta V
 WHERE C.id_cliente = V.id_cliente
 GROUP BY C.id_cliente;
 
--- 14.Productos más vendidos
+-- 14.obtener los empleados y los cultivos asignados
 
-SELECT I.nombre, SUM(D.cantidad_vendida) AS total_vendido
-FROM Inventario I, Detalle_Venta D
-WHERE I.id_producto = D.id_producto
-GROUP BY I.nombre;
+SELECT E.nombre AS empleado, E.apellidos AS apellidos, C.variedad AS cultivo, 
+A.fecha_asignacion AS fecha_asignacion
+FROM Empleado E, Cultivo C, Asignacion_Empleado A
+WHERE E.id_empleado = A.id_empleado
+AND C.id_cultivo = A.id_cultivo
+ORDER BY E.nombre, A.fecha_asignacion;
 
--- 15. Clientes con ventas recurrentes y su total
-
-SELECT C.nombre, C.apellidos, SUM(V.total) AS total_recurrente
-FROM Cliente C, Venta V
-WHERE C.id_cliente = V.id_cliente
-GROUP BY C.id_cliente
-HAVING COUNT(V.id_venta) > 1;
+-- 15. Listado de empleados y su estado:
+SELECT nombre, apellidos, ciudad
+FROM Empleado
+WHERE id_estado = 1;
 
 -- 16. Productos por proveedor
 
@@ -133,21 +133,15 @@ FROM Venta V, Cliente C
 WHERE V.id_cliente = C.id_cliente
 AND C.frecuencia_compra = 'Mensual';
 
--- 19. Cultivos con rendimiento inferior a 50 toneladas
+-- 19. Cultivos sembrados en un año específico:
+SELECT variedad, fecha_siembra
+FROM Cultivo
+WHERE YEAR(fecha_siembra) = 2024;
 
-SELECT C.variedad, SUM(P.toneladas_RFF) AS total_produccion
-FROM Cultivo C, Produccion P
-WHERE C.id_cultivo = P.id_cultivo
-GROUP BY C.variedad
-HAVING total_produccion < 50;
-
--- 20. Empleados con más de 10 asignaciones completadas
-
-SELECT E.nombre, E.apellidos, COUNT(A.id_asignacion) AS total_asignaciones
-FROM Empleado E, Asignacion_Empleado A
-WHERE E.id_empleado = A.id_empleado
-GROUP BY E.id_empleado
-HAVING total_asignaciones > 10;
+-- 20. Total de ventas por cliente:
+SELECT id_cliente, SUM(total) AS total_ventas
+FROM Venta
+GROUP BY id_cliente;
 
 -- 21. Proveedores con productos con cantidad menor a 10
 
@@ -155,17 +149,15 @@ SELECT P.nombre AS proveedor, I.nombre AS producto
 FROM Proveedor P, Inventario I
 WHERE P.id_proveedor = I.id_proveedor AND I.cantidad_disponible < 10;
 
--- 22. Ventas de productos con descuento superior al 20%
+-- 22. Empleados con más de 2 faltas
+SELECT id_empleado, dias_faltas
+FROM Salario
+WHERE dias_faltas > 2;
 
-SELECT V.id_venta, V.total, D.descuento
-FROM Venta V, Detalle_Venta D
-WHERE V.id_venta = D.id_venta AND D.descuento > 20;
-
--- 23. Perdidas relacionadas con productos específicos
-
-SELECT P.monto_perdida, I.nombre AS producto
-FROM Perdidas P, Inventario I
-WHERE P.id_producto = I.id_producto;
+-- 23. Proveedor que suministra un tipo de producto específico
+SELECT nombre, producto_sumistrado
+FROM Proveedor
+WHERE producto_sumistrado = 'Fertilizantes';
 
 -- 24. Cultivos con menor rendimiento por mes
 
@@ -174,19 +166,17 @@ FROM Cultivo C, Produccion P
 WHERE C.id_cultivo = P.id_cultivo
 GROUP BY C.variedad, MONTH(P.fecha_cosecha);
 
--- 25. Empleados con salarios superiores a 3000
+-- 25. Empleados con salarios superiores a 1000
 
 SELECT E.nombre, E.apellidos, S.salario_base
 FROM Empleado E, Salario S
 WHERE E.id_empleado = S.id_empleado
-AND S.salario_base > 3000;
+AND S.salario_base > 1000;
 
--- 26. Ventas por cada proveedor de productos
-
-SELECT P.nombre AS proveedor, SUM(D.cantidad_vendida * D.precio_unitario) AS total_ventas
-FROM Proveedor P, Inventario I, Detalle_Venta D
-WHERE I.id_proveedor = P.id_proveedor AND I.id_producto = D.id_producto
-GROUP BY P.nombre;
+-- 26. Total de producción por cultivo
+SELECT id_cultivo, SUM(toneladas_RFF) AS total_produccion
+FROM Produccion
+GROUP BY id_cultivo;
 
 -- 27. Proveedores con productos con cantidades por debajo de 20 unidades
 
@@ -201,12 +191,10 @@ FROM Venta V, Cliente C
 WHERE V.id_cliente = C.id_cliente
 AND C.frecuencia_compra = 'Mensual';
 
--- 29. Perdidas por maquinaria de tipo 'Tractor'
-
-SELECT P.monto_perdida, M.nombre AS maquinaria
-FROM Perdidas P, Maquinaria M
-WHERE P.id_maquinaria = M.id_maquinaria
-AND M.nombre = 'Tractor';
+-- 29. Cultivos que tienen un rendimiento estimado mayor a 50 toneladas
+SELECT variedad, rendimiento_estimado
+FROM Cultivo
+WHERE rendimiento_estimado > 50;
 
 -- 30. Total de ventas realizadas por cada cliente
 
@@ -215,28 +203,20 @@ FROM Cliente C, Venta V
 WHERE C.id_cliente = V.id_cliente
 GROUP BY C.id_cliente;
 
--- 31. Ventas por cada cliente y producto
+-- 31. Maquinaria que necesita mantenimiento en un mes específico
+SELECT nombre, fecha_compra
+FROM Maquinaria
+WHERE MONTH(ultimo_mantenimiento) = 6;
 
-SELECT C.nombre, I.nombre AS producto, SUM(D.cantidad_vendida * D.precio_unitario) AS total_producto
-FROM Cliente C, Inventario I, Detalle_Venta D
-WHERE C.id_cliente = D.id_cliente AND D.id_producto = I.id_producto
-GROUP BY C.id_cliente, I.id_producto;
+-- 32.Clientes con frecuencia de compra mensual
+SELECT nombre, apellidos
+FROM Cliente
+WHERE frecuencia_compra = 'Mensual';
 
--- 32.Cultivos de mayor rentabilidad
-
-SELECT C.variedad, SUM(P.toneladas_RFF * P.precio_unitario) AS rentabilidad
-FROM Cultivo C, Produccion P
-WHERE C.id_cultivo = P.id_cultivo
-GROUP BY C.variedad
-ORDER BY rentabilidad DESC;
-
--- 33. Clientes con ventas recurrentes
-
-SELECT C.nombre, C.apellidos
-FROM Cliente C, Venta V
-WHERE C.id_cliente = V.id_cliente
-GROUP BY C.id_cliente
-HAVING COUNT(V.id_venta) > 1;
+-- 33. Ventas realizadas en el mes de febrero de 2024
+SELECT id_venta, fecha_venta
+FROM Venta
+WHERE MONTH(fecha_venta) = 2 AND YEAR(fecha_venta) = 2024;
 
 -- 34. Productos por proveedor
 
@@ -244,13 +224,10 @@ SELECT P.nombre AS proveedor, I.nombre AS producto
 FROM Proveedor P, Inventario I
 WHERE I.id_proveedor = P.id_proveedor;
 
--- 35.Empleados con asignaciones mayores de 6 horas
-
-SELECT E.nombre, E.apellidos, COUNT(A.id_asignacion) AS total_asignaciones
-FROM Empleado E, Asignacion_Empleado A
-WHERE E.id_empleado = A.id_empleado
-GROUP BY E.id_empleado
-HAVING total_asignaciones > 6;
+-- 35.Gastos realizados por un empleado específico
+SELECT tipo_gasto, pago
+FROM Gastos
+WHERE id_empleado = 1;
 
 -- 36. Cultivos con fecha de siembra anterior a 2023
 
@@ -302,25 +279,20 @@ WHERE I.id_producto = D.id_produccion AND I.id_proveedor = P.id_proveedor
 GROUP BY I.nombre, P.nombre
 ORDER BY total_vendido DESC;
 
--- 43. Proveedores con productos en promoción
+-- 43. Productos con más de 100 unidades disponibles
+SELECT nombre, cantidad_disponible
+FROM Inventario
+WHERE cantidad_disponible > 100;
 
-SELECT P.nombre AS proveedor, I.nombre AS producto
-FROM Proveedor P, Inventario I
-WHERE I.id_proveedor = P.id_proveedor AND I.unidad_medida = 1;
+-- 44. Empleados que fueron asignados a un cultivo específico
+SELECT nombre, apellidos
+FROM Empleado
+WHERE id_empleado IN (SELECT id_empleado FROM Asignacion_Empleado WHERE id_cultivo = 1);
 
--- 44. Empleados con horas extras superiores a 10 horas
-
-SELECT E.nombre, E.apellidos, SUM(A.horas_extras) AS total_horas_extras
-FROM Empleado E, Asignacion_Empleado A
-WHERE E.id_empleado = A.id_empleado
-GROUP BY E.id_empleado
-HAVING total_horas_extras > 10;
-
--- 45. Ventas realizadas con descuento superior al 20%
-
-SELECT V.id_venta, V.total, D.descuento
-FROM Venta V, Detalle_Venta D
-WHERE V.id_venta = D.id_venta AND D.descuento > 20;
+-- 45. Total de pérdidas por maquinaria
+SELECT id_maquinaria, SUM(monto_perdida) AS total_perdidas
+FROM Perdidas
+GROUP BY id_maquinaria;
 
 -- 46. Cultivos con ventas superiores a 500 unidades
 
@@ -337,13 +309,10 @@ FROM Cultivo C, Perdidas P
 WHERE C.id_cultivo = P.id_cultivo
 GROUP BY C.variedad;
 
--- 48. Cultivos con producción inferior a 100 toneladas
-
-SELECT C.variedad, SUM(P.toneladas_RFF) AS total_produccion
-FROM Cultivo C, Produccion P
-WHERE C.id_cultivo = P.id_cultivo
-GROUP BY C.variedad
-HAVING total_produccion < 100;
+-- 48. Detalle de mantenimiento de una maquinaria específica
+SELECT fecha_mantenimiento, tipo_mantenimiento
+FROM Mantenimiento
+WHERE id_maquinaria = 1;
 
 -- 49. Clientes con mayor frecuencia de compra
 
@@ -353,9 +322,10 @@ WHERE C.id_cliente = V.id_cliente
 GROUP BY C.id_cliente
 ORDER BY total_compras DESC;
 
--- 50. Clientes que nunca realizaron compras
+-- 50. Productos vendidos en una venta específica
+SELECT cantidad_vendida, precio_unitario
+FROM Detalle_Venta
+WHERE id_venta = 1;
 
-SELECT C.nombre, C.apellidos
-FROM Cliente C
-WHERE C.id_cliente NOT IN (SELECT V.id_cliente FROM Venta V);
+
 
