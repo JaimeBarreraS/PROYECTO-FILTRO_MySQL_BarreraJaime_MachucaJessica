@@ -1,4 +1,4 @@
-USE Palmaris_Tech_pe;
+USE Palmaris_Tech_t1;
 
 -- 1.
 SELECT * FROM SALARIO;
