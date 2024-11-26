@@ -1,4 +1,4 @@
-USE Palmaris_Tech_t1;
+USE Palmaris_Tech;
 
 -- Crear usuarios
 CREATE USER 'administrador'@'localhost' IDENTIFIED BY 'admin_password';

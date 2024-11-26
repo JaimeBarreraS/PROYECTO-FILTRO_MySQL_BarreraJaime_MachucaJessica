@@ -1,4 +1,4 @@
-USE Palmaris_Tech_t1;
+USE Palmaris_Tech;
 
 -- ############## CONSULTAS CON JOIN ###################
 
