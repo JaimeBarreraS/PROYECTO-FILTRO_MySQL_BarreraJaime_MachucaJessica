@@ -1,5 +1,4 @@
 CREATE DATABASE Palmaris_Tech;
-
 USE Palmaris_Tech;
 
 CREATE TABLE Cultivo (
